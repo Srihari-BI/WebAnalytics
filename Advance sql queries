@@ -1,0 +1,95 @@
+-- Query 1: Retrieve all employees along with their department details and manager names
+SELECT e.employee_id, e.employee_name, e.department_id, d.department_name, 
+       CONCAT(m.first_name, ' ', m.last_name) AS manager_name
+FROM employees e
+LEFT JOIN departments d ON e.department_id = d.department_id
+LEFT JOIN employees m ON e.manager_id = m.employee_id;
+
+-- Query 2: Calculate the total sales amount for each product category and include percentage of total sales
+WITH TotalSales AS (
+    SELECT SUM(order_amount) AS total_sales
+    FROM orders
+)
+SELECT p.category_id, c.category_name, SUM(o.order_amount) AS category_sales,
+       ROUND((SUM(o.order_amount) / ts.total_sales) * 100, 2) AS sales_percentage_of_total
+FROM products p
+JOIN orders o ON p.product_id = o.product_id
+JOIN categories c ON p.category_id = c.category_id
+CROSS JOIN TotalSales ts
+GROUP BY p.category_id, c.category_name, ts.total_sales;
+
+-- Query 3: Find customers who have placed orders for products from at least 3 different categories
+SELECT c.customer_id, c.customer_name, COUNT(DISTINCT p.category_id) AS num_categories_ordered
+FROM customers c
+JOIN orders o ON c.customer_id = o.customer_id
+JOIN order_details od ON o.order_id = od.order_id
+JOIN products p ON od.product_id = p.product_id
+GROUP BY c.customer_id, c.customer_name
+HAVING COUNT(DISTINCT p.category_id) >= 3;
+
+-- Query 4: Identify customers with abnormal purchase behavior by comparing their average order amount with overall average
+WITH AvgOrderAmount AS (
+    SELECT AVG(order_amount) AS overall_avg_order_amount
+    FROM orders
+)
+SELECT c.customer_id, c.customer_name, AVG(o.order_amount) AS avg_order_amount,
+       CASE 
+           WHEN AVG(o.order_amount) > aoa.overall_avg_order_amount * 1.5 THEN 'High Spender'
+           WHEN AVG(o.order_amount) < aoa.overall_avg_order_amount * 0.5 THEN 'Low Spender'
+           ELSE 'Normal Spender'
+       END AS spending_behavior
+FROM customers c
+JOIN orders o ON c.customer_id = o.customer_id
+CROSS JOIN AvgOrderAmount aoa
+GROUP BY c.customer_id, c.customer_name, aoa.overall_avg_order_amount;
+
+-- Query 5: Calculate cumulative sales for each month over a period of 12 months
+SELECT MONTH(order_date) AS month, YEAR(order_date) AS year,
+       SUM(order_amount) OVER (PARTITION BY YEAR(order_date) ORDER BY MONTH(order_date)) AS cumulative_sales
+FROM orders
+WHERE order_date BETWEEN DATE_SUB(CURDATE(), INTERVAL 1 YEAR) AND CURDATE();
+
+-- Query 6: Find customers who have not placed any orders in the last 6 months
+SELECT c.customer_id, c.customer_name
+FROM customers c
+LEFT JOIN orders o ON c.customer_id = o.customer_id AND o.order_date >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+WHERE o.order_id IS NULL;
+
+-- Query 7: Identify top 10% of products based on total sales amount
+SELECT p.product_id, p.product_name, SUM(o.order_amount) AS total_sales_amount
+FROM products p
+JOIN order_details od ON p.product_id = od.product_id
+JOIN orders o ON od.order_id = o.order_id
+GROUP BY p.product_id, p.product_name
+HAVING total_sales_amount >= (
+    SELECT PERCENTILE_CONT(0.9) WITHIN GROUP (ORDER BY SUM(order_amount) DESC) AS sales_threshold
+    FROM orders
+)
+ORDER BY total_sales_amount DESC;
+
+-- Query 8: Calculate moving average of order amounts over a rolling 3-month period
+SELECT order_date, order_amount,
+       AVG(order_amount) OVER (ORDER BY order_date ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS moving_avg_order_amount
+FROM orders
+ORDER BY order_date;
+
+-- Query 9: Find products that have shown a consistent increase in sales over the last 3 months
+SELECT p.product_id, p.product_name,
+       SUM(CASE WHEN MONTH(o.order_date) = MONTH(CURDATE()) THEN o.order_amount ELSE 0 END) AS current_month_sales,
+       SUM(CASE WHEN MONTH(o.order_date) = MONTH(CURDATE() - INTERVAL 1 MONTH) THEN o.order_amount ELSE 0 END) AS last_month_sales,
+       SUM(CASE WHEN MONTH(o.order_date) = MONTH(CURDATE() - INTERVAL 2 MONTH) THEN o.order_amount ELSE 0 END) AS two_months_ago_sales
+FROM products p
+JOIN order_details od ON p.product_id = od.product_id
+JOIN orders o ON od.order_id = o.order_id
+GROUP BY p.product_id, p.product_name
+HAVING current_month_sales > last_month_sales AND last_month_sales > two_months_ago_sales;
+
+-- Query 10: Calculate customer retention rate over a 12-month period
+SELECT YEAR(order_date) AS year, MONTH(order_date) AS month,
+       COUNT(DISTINCT CASE WHEN YEAR(order_date) = YEAR(CURDATE()) - 1 THEN customer_id END) AS returning_customers_last_year,
+       COUNT(DISTINCT CASE WHEN YEAR(order_date) = YEAR(CURDATE()) THEN customer_id END) AS returning_customers_current_year,
+       COUNT(DISTINCT CASE WHEN YEAR(order_date) = YEAR(CURDATE()) - 1 THEN customer_id END) /
+       COUNT(DISTINCT CASE WHEN YEAR(order_date) = YEAR(CURDATE()) THEN customer_id END) AS retention_rate
+FROM orders
+WHERE order_date BETWEEN DATE_SUB(CURDATE(), INTERVAL 1 YEAR) AND CURDATE()
+GROUP BY YEAR(order_date), MONTH(order_date);
