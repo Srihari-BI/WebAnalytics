@@ -1,0 +1,78 @@
+-- Query 1: Retrieve all employees from the Employees table
+SELECT *
+FROM Employees;
+
+-- Query 2: List products with their categories from the Products and Categories tables
+SELECT p.product_id, p.product_name, c.category_name
+FROM Products p
+JOIN Categories c ON p.category_id = c.category_id;
+
+-- Query 3: Count the number of orders for each customer
+SELECT customer_id, COUNT(order_id) AS num_orders
+FROM Orders
+GROUP BY customer_id;
+
+-- Query 4: Calculate total revenue from orders
+SELECT SUM(order_total) AS total_revenue
+FROM Orders;
+
+-- Query 5: Find orders placed in the last month
+SELECT *
+FROM Orders
+WHERE order_date >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH);
+
+-- Query 6: List customers who have not placed any orders
+SELECT *
+FROM Customers
+WHERE customer_id NOT IN (SELECT DISTINCT customer_id FROM Orders);
+
+-- Query 7: Calculate average order value per customer
+SELECT customer_id, AVG(order_total) AS avg_order_value
+FROM Orders
+GROUP BY customer_id;
+
+-- Query 8: Identify the most expensive product(s)
+SELECT *
+FROM Products
+WHERE product_price = (SELECT MAX(product_price) FROM Products);
+
+-- Query 9: Find customers with the highest number of orders
+SELECT customer_id, COUNT(order_id) AS num_orders
+FROM Orders
+GROUP BY customer_id
+ORDER BY num_orders DESC
+LIMIT 1;
+
+-- Query 10: List orders with more than 3 line items
+SELECT *
+FROM Orders
+WHERE order_id IN (SELECT order_id FROM OrderItems GROUP BY order_id HAVING COUNT(*) > 3);
+
+-- Query 11: Retrieve top 5 best-selling products by quantity
+SELECT p.product_id, p.product_name, SUM(oi.quantity) AS total_quantity_sold
+FROM Products p
+JOIN OrderItems oi ON p.product_id = oi.product_id
+GROUP BY p.product_id
+ORDER BY total_quantity_sold DESC
+LIMIT 5;
+
+-- Query 12: Calculate average shipping cost per order
+SELECT AVG(shipping_cost) AS avg_shipping_cost
+FROM Orders;
+
+-- Query 13: List customers who placed orders in both January and February
+SELECT customer_id
+FROM Orders
+WHERE MONTH(order_date) IN (1, 2)
+GROUP BY customer_id
+HAVING COUNT(DISTINCT MONTH(order_date)) = 2;
+
+-- Query 14: Find orders where the shipping address is different from the billing address
+SELECT *
+FROM Orders
+WHERE billing_address <> shipping_address;
+
+-- Query 15: Calculate total revenue grouped by month
+SELECT MONTH(order_date) AS month, SUM(order_total) AS monthly_revenue
+FROM Orders
+GROUP BY MONTH(order_date);
