@@ -1,0 +1,147 @@
+CREATE TABLE Visitors (
+    visitor_id INT PRIMARY KEY,
+    ip_address VARCHAR(255),
+    country VARCHAR(100),
+    city VARCHAR(100),
+    browser VARCHAR(100),
+    operating_system VARCHAR(100),
+    device_type VARCHAR(100),
+    first_visit_timestamp TIMESTAMP,
+    last_visit_timestamp TIMESTAMP
+);
+
+-- Example insert statements
+INSERT INTO Visitors (visitor_id, ip_address, country, city, browser, operating_system, device_type, first_visit_timestamp, last_visit_timestamp)
+VALUES
+    (1, '192.168.1.1', 'United States', 'New York', 'Chrome', 'Windows 10', 'Desktop', '2024-06-25 09:00:00', '2024-06-25 09:15:00'),
+    (2, '10.0.0.1', 'Canada', 'Toronto', 'Safari', 'iOS', 'Mobile', '2024-06-25 10:30:00', '2024-06-25 10:45:00'),
+    (3, '172.16.0.1', 'Germany', 'Berlin', 'Firefox', 'Linux', 'Desktop', '2024-06-25 11:00:00', '2024-06-25 11:30:00'),
+    (4, '192.168.0.1', 'Australia', 'Sydney', 'Edge', 'Windows 11', 'Tablet', '2024-06-25 12:00:00', '2024-06-25 12:15:00'),
+    (5, '192.168.1.2', 'United Kingdom', 'London', 'Firefox', 'MacOS', 'Desktop', '2024-06-25 13:00:00', '2024-06-25 13:30:00'),
+    (6, '10.0.0.2', 'United States', 'Los Angeles', 'Chrome', 'Android', 'Mobile', '2024-06-25 14:00:00', '2024-06-25 14:45:00'),
+    (7, '192.168.2.1', 'France', 'Paris', 'Safari', 'iOS', 'Tablet', '2024-06-25 15:00:00', '2024-06-25 15:30:00'),
+    (8, '172.16.1.1', 'Brazil', 'Rio de Janeiro', 'Firefox', 'Windows 10', 'Desktop', '2024-06-25 16:00:00', '2024-06-25 16:15:00'),
+    (9, '192.168.0.2', 'Spain', 'Madrid', 'Edge', 'Windows 11', 'Desktop', '2024-06-25 17:00:00', '2024-06-25 17:30:00'),
+    (10, '10.0.1.1', 'Italy', 'Rome', 'Chrome', 'Android', 'Mobile', '2024-06-25 18:00:00', '2024-06-25 18:45:00'),
+    (11, '192.168.3.1', 'India', 'Mumbai', 'Safari', 'iOS', 'Tablet', '2024-06-25 19:00:00', '2024-06-25 19:30:00'),
+    (12, '172.16.2.1', 'China', 'Shanghai', 'Firefox', 'Windows 10', 'Desktop', '2024-06-25 20:00:00', '2024-06-25 20:15:00'),
+    (13, '192.168.1.3', 'Germany', 'Munich', 'Chrome', 'MacOS', 'Desktop', '2024-06-25 21:00:00', '2024-06-25 21:30:00'),
+    (14, '10.0.2.1', 'United States', 'Chicago', 'Firefox', 'Linux', 'Desktop', '2024-06-25 22:00:00', '2024-06-25 22:45:00'),
+    (15, '192.168.4.1', 'Australia', 'Melbourne', 'Chrome', 'Android', 'Mobile', '2024-06-25 23:00:00', '2024-06-25 23:30:00'),
+    (16, '192.168.2.2', 'United Kingdom', 'Manchester', 'Safari', 'iOS', 'Tablet', '2024-06-26 00:00:00', '2024-06-26 00:30:00'),
+    (17, '10.0.3.1', 'Canada', 'Vancouver', 'Edge', 'Windows 11', 'Desktop', '2024-06-26 01:00:00', '2024-06-26 01:15:00'),
+    (18, '192.168.5.1', 'France', 'Lyon', 'Chrome', 'MacOS', 'Desktop', '2024-06-26 02:00:00', '2024-06-26 02:30:00'),
+    (19, '172.16.3.1', 'Brazil', 'Sao Paulo', 'Firefox', 'Linux', 'Desktop', '2024-06-26 03:00:00', '2024-06-26 03:15:00'),
+    (20, '192.168.3.2', 'Spain', 'Barcelona', 'Safari', 'iOS', 'Mobile', '2024-06-26 04:00:00', '2024-06-26 04:30:00');
+
+
+CREATE TABLE Pageviews (
+    pageview_id INT PRIMARY KEY,
+    visitor_id INT,
+    page_url VARCHAR(255),
+    page_title VARCHAR(255),
+    page_type VARCHAR(50),
+    visit_timestamp TIMESTAMP,
+    time_spent_seconds INT,
+    referring_url VARCHAR(255),
+    device_type VARCHAR(100),
+    FOREIGN KEY (visitor_id) REFERENCES Visitors(visitor_id)
+);
+
+-- Example insert statements
+INSERT INTO Pageviews (pageview_id, visitor_id, page_url, page_title, page_type, visit_timestamp, time_spent_seconds, referring_url, device_type)
+VALUES
+    (1, 1, 'https://example.com/page1', 'Page 1', 'Blog', '2024-06-25 09:05:00', 300, NULL, 'Desktop'),
+    (2, 1, 'https://example.com/page2', 'Page 2', 'Product', '2024-06-25 09:10:00', 180, 'https://google.com', 'Desktop'),
+    (3, 2, 'https://example.com/page1', 'Page 1', 'Blog', '2024-06-25 10:35:00', 240, NULL, 'Mobile'),
+    (4, 3, 'https://example.com/page3', 'Page 3', 'Article', '2024-06-25 11:15:00', 150, NULL, 'Desktop'),
+    (5, 4, 'https://example.com/page4', 'Page 4', 'Blog', '2024-06-25 12:30:00', 200, 'https://bing.com', 'Tablet'),
+    (6, 5, 'https://example.com/page5', 'Page 5', 'Product', '2024-06-25 13:45:00', 280, NULL, 'Mobile'),
+    (7, 6, 'https://example.com/page1', 'Page 1', 'Blog', '2024-06-25 14:20:00', 220, 'https://yahoo.com', 'Desktop'),
+    (8, 7, 'https://example.com/page6', 'Page 6', 'Product', '2024-06-25 15:00:00', 320, 'https://amazon.com', 'Mobile'),
+    (9, 8, 'https://example.com/page7', 'Page 7', 'Blog', '2024-06-25 16:10:00', 180, NULL, 'Desktop'),
+    (10, 9, 'https://example.com/page8', 'Page 8', 'Product', '2024-06-25 17:20:00', 250, 'https://example.com', 'Mobile'),
+    (11, 10, 'https://example.com/page9', 'Page 9', 'Blog', '2024-06-25 18:30:00', 300, NULL, 'Desktop'),
+    (12, 11, 'https://example.com/page10', 'Page 10', 'Article', '2024-06-25 19:40:00', 210, 'https://google.com', 'Tablet'),
+    (13, 12, 'https://example.com/page1', 'Page 1', 'Blog', '2024-06-25 20:50:00', 180, NULL, 'Mobile'),
+    (14, 13, 'https://example.com/page11', 'Page 11', 'Product', '2024-06-25 21:00:00', 280, 'https://bing.com', 'Desktop'),
+    (15, 14, 'https://example.com/page12', 'Page 12', 'Blog', '2024-06-25 22:15:00', 240, NULL, 'Mobile'),
+    (16, 15, 'https://example.com/page13', 'Page 13', 'Product', '2024-06-25 23:30:00', 350, 'https://yahoo.com', 'Desktop'),
+    (17, 16, 'https://example.com/page1', 'Page 1', 'Blog', '2024-06-26 00:45:00', 220, 'https://amazon.com', 'Mobile'),
+    (18, 17, 'https://example.com/page14', 'Page 14', 'Article', '2024-06-26 01:00:00', 270, NULL, 'Desktop'),
+    (19, 18, 'https://example.com/page15', 'Page 15', 'Product', '2024-06-26 02:10:00', 190, 'https://example.com', 'Mobile'),
+    (20, 19, 'https://example.com/page16', 'Page 16', 'Blog', '2024-06-26 03:20:00', 320, NULL, 'Desktop');
+
+
+CREATE TABLE Events (
+    event_id INT PRIMARY KEY,
+    visitor_id INT,
+    event_name VARCHAR(100),
+    event_category VARCHAR(100),
+    event_label VARCHAR(255),
+    event_value INT,
+    event_timestamp TIMESTAMP,
+    page_url VARCHAR(255),
+    device_type VARCHAR(100),
+    FOREIGN KEY (visitor_id) REFERENCES Visitors(visitor_id)
+);
+
+-- Example insert statements
+INSERT INTO Events (event_id, visitor_id, event_name, event_category, event_label, event_value, event_timestamp, page_url, device_type)
+VALUES
+    (1, 1, 'Click', 'Navigation', 'Menu', NULL, '2024-06-25 09:08:00', 'https://example.com', 'Desktop'),
+    (2, 1, 'Purchase', 'E-commerce', 'Product A', 100, '2024-06-25 09:12:00', 'https://example.com/productA', 'Desktop'),
+    (3, 2, 'Scroll', 'Interaction', 'Homepage', NULL, '2024-06-25 10:40:00', 'https://example.com', 'Mobile'),
+    (4, 3, 'Click', 'Navigation', 'Footer', NULL, '2024-06-25 11:20:00', 'https://example.com/page3', 'Desktop'),
+    (5, 4, 'Sign Up', 'Account', NULL, NULL, '2024-06-25 12:45:00', NULL, 'Tablet'),
+    (6, 5, 'Click', 'Navigation', 'Sidebar', NULL, '2024-06-25 13:50:00', 'https://example.com/page5', 'Mobile'),
+    (7, 6, 'Add to Cart', 'E-commerce', 'Product B', 80, '2024-06-25 14:25:00', 'https://example.com', 'Desktop'),
+    (8, 7, 'Search', 'Navigation', 'Search Bar', NULL, '2024-06-25 15:05:00', 'https://example.com/page6', 'Tablet'),
+    (9, 8, 'Purchase', 'E-commerce', 'Product C', 150, '2024-06-25 16:15:00', 'https://example.com', 'Desktop'),
+    (10, 9, 'Scroll', 'Interaction', 'Article', NULL, '2024-06-25 17:30:00', 'https://example.com/page8', 'Mobile'),
+    (11, 10, 'Click', 'Navigation', 'Header', NULL, '2024-06-25 18:45:00', 'https://example.com/page9', 'Desktop'),
+    (12, 11, 'Download', 'Resource', 'PDF Guide', NULL, '2024-06-25 19:50:00', 'https://example.com/page10', 'Tablet'),
+    (13, 12, 'Sign Up', 'Account', NULL, NULL, '2024-06-25 20:55:00', NULL, 'Mobile'),
+    (14, 13, 'Click', 'Navigation', 'Breadcrumb', NULL, '2024-06-25 21:10:00', 'https://example.com/page11', 'Desktop'),
+    (15, 14, 'Add to Cart', 'E-commerce', 'Product D', 120, '2024-06-25 22:30:00', 'https://example.com/page12', 'Mobile'),
+    (16, 15, 'Purchase', 'E-commerce', 'Product E', 200, '2024-06-25 23:45:00', 'https://example.com', 'Desktop'),
+    (17, 16, 'Scroll', 'Interaction', 'Homepage', NULL, '2024-06-26 00:55:00', 'https://example.com', 'Mobile'),
+    (18, 17, 'Click', 'Navigation', 'Footer', NULL, '2024-06-26 01:10:00', 'https://example.com/page14', 'Desktop'),
+    (19, 18, 'Sign Up', 'Account', NULL, NULL, '2024-06-26 02:20:00', NULL, 'Mobile'),
+    (20, 19, 'Add to Cart', 'E-commerce', 'Product F', 180, '2024-06-26 03:35:00', 'https://example.com/page16', 'Desktop');
+
+
+CREATE TABLE Conversions (
+    conversion_id INT PRIMARY KEY,
+    visitor_id INT,
+    conversion_goal VARCHAR(100),
+    conversion_timestamp TIMESTAMP,
+    conversion_value DECIMAL(10, 2),
+    conversion_type VARCHAR(50),
+    conversion_details TEXT,
+    FOREIGN KEY (visitor_id) REFERENCES Visitors(visitor_id)
+);
+
+-- Example insert statements
+INSERT INTO Conversions (conversion_id, visitor_id, conversion_goal, conversion_timestamp, conversion_value, conversion_type, conversion_details)
+VALUES
+    (1, 1, 'Purchase', '2024-06-25 09:12:00', 100.00, 'Product', 'Product A'),
+    (2, 2, 'Sign Up', '2024-06-25 10:50:00', NULL, 'Lead', 'Newsletter sign-up'),
+    (3, 3, 'Purchase', '2024-06-25 11:30:00', 80.00, 'Product', 'Product B'),
+    (4, 4, 'Sign Up', '2024-06-25 12:45:00', NULL, 'Lead', 'Subscription'),
+    (5, 5, 'Purchase', '2024-06-25 13:55:00', 120.00, 'Product', 'Product C'),
+    (6, 6, 'Sign Up', '2024-06-25 14:30:00', NULL, 'Lead', 'Membership'),
+    (7, 7, 'Purchase', '2024-06-25 15:10:00', 150.00, 'Product', 'Product D'),
+    (8, 8, 'Sign Up', '2024-06-25 16:25:00', NULL, 'Lead', 'Account registration'),
+    (9, 9, 'Purchase', '2024-06-25 17:40:00', 180.00, 'Product', 'Product E'),
+    (10, 10, 'Sign Up', '2024-06-25 18:55:00', NULL, 'Lead', 'Demo request'),
+    (11, 11, 'Purchase', '2024-06-25 19:50:00', 200.00, 'Product', 'Product F'),
+    (12, 12, 'Sign Up', '2024-06-25 20:45:00', NULL, 'Lead', 'Event registration'),
+    (13, 13, 'Purchase', '2024-06-25 21:30:00', 220.00, 'Product', 'Product G'),
+    (14, 14, 'Sign Up', '2024-06-25 22:15:00', NULL, 'Lead', 'Free trial'),
+    (15, 15, 'Purchase', '2024-06-25 23:00:00', 240.00, 'Product', 'Product H'),
+    (16, 16, 'Sign Up', '2024-06-25 23:45:00', NULL, 'Lead', 'Download'),
+    (17, 17, 'Purchase', '2024-06-26 00:30:00', 260.00, 'Product', 'Product I'),
+    (18, 18, 'Sign Up', '2024-06-26 01:15:00', NULL, 'Lead', 'Account creation'),
+    (19, 19, 'Purchase', '2024-06-26 02:00:00', 280.00, 'Product', 'Product J'),
+    (20, 20, 'Sign Up', '2024-06-26 02:45:00', NULL, 'Lead', 'Contact form');
